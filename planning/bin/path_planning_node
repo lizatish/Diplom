@@ -6,6 +6,7 @@ import rospy
 from nav_msgs.msg import Odometry, OccupancyGrid, Path
 from geometry_msgs.msg import Pose, Point, PoseStamped
 from tf.transformations import euler_from_quaternion, quaternion_from_euler
+import matplotlib.pyplot as plt
 
 
 class Server:
@@ -20,16 +21,16 @@ class Server:
         self.ROBOT_HEIGHT = 0.7
 
     def odometry_callback(self, data):
-        rospy.loginfo("Odom recieved")
+        # rospy.loginfo("Odom recieved")
         self._odom = data
 
     def map_callback(self, data):
-        rospy.loginfo("Map recieved")
+        # rospy.loginfo("Map recieved")
         self._map = data
 
     def goal_callback(self, data):
-        rospy.loginfo("Goal recieved")
-        self._final_path = data
+        # rospy.loginfo("Goal recieved")
+        self._goal = data
 
     def get_map(self):
         return self._map
@@ -57,13 +58,22 @@ def main():
         goal_position = server.get_goal()
         current_map = server.get_map()
         if current_position and current_map and goal_position:
+            cur_orientation_list = [current_position.pose.pose.orientation.x,
+                                    current_position.pose.pose.orientation.y,
+                                    current_position.pose.pose.orientation.z,
+                                    current_position.pose.pose.orientation.w]
+            goal_orientation_list = [goal_position.pose.orientation.x,
+                                     goal_position.pose.orientation.y,
+                                     goal_position.pose.orientation.z,
+                                     goal_position.pose.orientation.w]
+
             # rospy.loginfo("True")
             start = [current_position.pose.pose.position.x,
                      current_position.pose.pose.position.y,
-                     euler_from_quaternion(current_position.pose.orientation)]
+                     euler_from_quaternion(cur_orientation_list)[2]]
             goal = [goal_position.pose.position.x,
                     goal_position.pose.position.y,
-                    tf.transformations.euler_from_quaternion(goal_position.pose.orientation)]
+                    euler_from_quaternion(goal_orientation_list)[2]]
 
             obstacleList = []
 
@@ -73,34 +83,22 @@ def main():
                       rand_area=rand_area,
                       obstacle_list=obstacleList)
             path = rrt.planning()
+            # print(path)
+            if path:
+                rrt.draw_graph()
 
+                plt.plot([x for (x, y) in path], [y for (x, y) in path], '-r')
+                plt.plot([x.x for x in rrt.new_node_list], [y.y for y in rrt.new_node_list], '-v')
 
+                plt.grid(True)
+                plt.pause(0.01)  # Need for Mac
+                plt.show()
         rate.sleep()
 
 
 if __name__ == '__main__':
-    main()
+    try:
+        main()
+    except rospy.ROSInterruptException:
+        pass
 
-
-def main2(gx=6.0, gy=10.0):
-    # print("start " + __file__)
-
-    # ====Search Path with RRT====
-    obstacleList = [
-        (5, 5, 1),
-        (3, 6, 2),
-        (3, 8, 2),
-        (3, 10, 2),
-        (7, 5, 2),
-        (9, 5, 2),
-        (8, 10, 1)
-    ]  # [x, y, radius]
-    # Set Initial parameters
-    # Set Initial parameters
-    start = [0.0, 0.0, np.deg2rad(0.0)]
-    goal = [10.0, 10.0, np.deg2rad(0.0)]
-    rrt = RRT(start,
-              goal,
-              rand_area=[-2, 15],
-              obstacle_list=obstacleList)
-    path = rrt.planning()

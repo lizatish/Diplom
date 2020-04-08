@@ -11,9 +11,7 @@ import random
 
 import matplotlib.pyplot as plt
 import numpy as np
-import sys
 import timeit
-import os
 import copy
 from rrt_dubins import dubins_path_planning
 
@@ -62,7 +60,7 @@ class RRT:
         # expand_dis - максимальная длина линий планирования
         self.start = self.Node(start[0], start[1])
         self.end = self.Node(goal[0], goal[1])
-        self.start_yaw = goal[2]
+        self.start_yaw = start[2]
         self.end_yaw = goal[2]
 
         self.min_rand = rand_area[0]
@@ -80,7 +78,7 @@ class RRT:
         self.goal_yaw_th = np.deg2rad(1.0)
         self.goal_xy_th = 0.5
 
-    def planning(self, animation=True):
+    def planning(self, animation=False):
         """
         rrt path planning
 
