@@ -15,14 +15,8 @@ import sys
 import timeit
 import os
 import copy
+from rrt_dubins import dubins_path_planning
 
-sys.path.append(os.path.dirname(os.path.abspath(__file__)) +
-                "/../DubinsPath/")
-
-try:
-    import dubins_path_planning
-except ImportError:
-    raise
 show_animation = False
 
 
@@ -270,7 +264,6 @@ class RRT:
         dubins_path_planning.plot_arrow(
             self.end.x, self.end.y, self.end_yaw)
 
-
     @staticmethod
     def get_nearest_node_index(node_list, rnd_node):
         dlist = [(node.x - rnd_node.x) ** 2 + (node.y - rnd_node.y)
@@ -334,7 +327,7 @@ def main(gx=6.0, gy=10.0):
         # print(len(path))
         # Draw final path
 
-        if   show_animation:
+        if show_animation:
             rrt.draw_graph()
 
             plt.plot([x for (x, y) in path], [y for (x, y) in path], '-r')

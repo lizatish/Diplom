@@ -1,27 +1,106 @@
 #! /usr/bin/env python
-import rrt_dubins.rrt
+from rrt_dubins.rrt_cleaning_dubins import RRT
+import numpy as np
 
 import rospy
-from std_msgs.msg import String
-from nav_msgs.msg import Odometry
+from nav_msgs.msg import Odometry, OccupancyGrid, Path
+from geometry_msgs.msg import Pose, Point, PoseStamped
+from tf.transformations import euler_from_quaternion, quaternion_from_euler
 
 
-def callback(data):
-    rospy.loginfo(rospy.get_caller_id() + "I heard %s", data.pose.pose.position)
+class Server:
+    def __init__(self):
+        self._odom = None
+        self._map = None
+        self._goal = None
+        self._final_path = None
 
-def talker():
-    pub = rospy.Publisher('chatter', String, queue_size=10)
-    rospy.init_node('talker', anonymous=True)
-    rate = rospy.Rate(10) # 10hz
-    rospy.Subscriber("odom", Odometry, callback)
+        self.CURVATURE = 0.3
+        self.ROBOT_WIDTH = 0.5
+        self.ROBOT_HEIGHT = 0.7
+
+    def odometry_callback(self, data):
+        rospy.loginfo("Odom recieved")
+        self._odom = data
+
+    def map_callback(self, data):
+        rospy.loginfo("Map recieved")
+        self._map = data
+
+    def goal_callback(self, data):
+        rospy.loginfo("Goal recieved")
+        self._final_path = data
+
+    def get_map(self):
+        return self._map
+
+    def get_odometry(self):
+        return self._odom
+
+    def get_goal(self):
+        return self._goal
+
+
+def main():
+    server = Server()
+    rospy.init_node('rrt_path_planner', anonymous=True)
+
+    rospy.Subscriber("odom", Odometry, server.odometry_callback)
+    rospy.Subscriber("global_map", OccupancyGrid, server.map_callback)
+    rospy.Subscriber("move_base_simple/goal", PoseStamped, server.goal_callback)
+
+    # pub = rospy.Publisher('chatter', String, queue_size=10)
+    rate = rospy.Rate(10)  # 10hz
 
     while not rospy.is_shutdown():
-        # hello_str = "hello world %s" % rospy.get_time()
-        # rospy.loginfo(hello_str)
-        # pub.publish(hello_str)
+        current_position = server.get_odometry()
+        goal_position = server.get_goal()
+        current_map = server.get_map()
+        if current_position and current_map and goal_position:
+            # rospy.loginfo("True")
+            start = [current_position.pose.pose.position.x,
+                     current_position.pose.pose.position.y,
+                     euler_from_quaternion(current_position.pose.orientation)]
+            goal = [goal_position.pose.position.x,
+                    goal_position.pose.position.y,
+                    tf.transformations.euler_from_quaternion(goal_position.pose.orientation)]
+
+            obstacleList = []
+
+            rand_area = [current_map.info.height, current_map.info.width]
+            rrt = RRT(start,
+                      goal,
+                      rand_area=rand_area,
+                      obstacle_list=obstacleList)
+            path = rrt.planning()
+
+
         rate.sleep()
 
 
 if __name__ == '__main__':
-    talker()
+    main()
 
+
+def main2(gx=6.0, gy=10.0):
+    # print("start " + __file__)
+
+    # ====Search Path with RRT====
+    obstacleList = [
+        (5, 5, 1),
+        (3, 6, 2),
+        (3, 8, 2),
+        (3, 10, 2),
+        (7, 5, 2),
+        (9, 5, 2),
+        (8, 10, 1)
+    ]  # [x, y, radius]
+    # Set Initial parameters
+    # Set Initial parameters
+    start = [0.0, 0.0, np.deg2rad(0.0)]
+    goal = [10.0, 10.0, np.deg2rad(0.0)]
+    rrt = RRT(start,
+              goal,
+              rand_area=[-2, 15],
+              obstacle_list=obstacleList)
+    path = rrt.planning()
