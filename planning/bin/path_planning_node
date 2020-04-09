@@ -3,7 +3,7 @@ from rrt_dubins.rrt_cleaning_dubins import RRT
 import numpy as np
 
 import rospy
-from nav_msgs.msg import Odometry, OccupancyGrid, Path
+from nav_msgs.msg import Odometry, OccupancyGrid, Path, GridCells
 from geometry_msgs.msg import Pose, Point, PoseStamped
 from tf.transformations import euler_from_quaternion, quaternion_from_euler
 import matplotlib.pyplot as plt
@@ -14,6 +14,7 @@ class Server:
         self._odom = None
         self._map = None
         self._goal = None
+        self._obstacles = None
         self._final_path = None
 
         self.CURVATURE = 0.3
@@ -23,6 +24,10 @@ class Server:
     def odometry_callback(self, data):
         # rospy.loginfo("Odom recieved")
         self._odom = data
+
+    def obstacles_callback(self, data):
+        # rospy.loginfo("Odom recieved")
+        self._obstacles = data
 
     def map_callback(self, data):
         # rospy.loginfo("Map recieved")
@@ -38,6 +43,9 @@ class Server:
     def get_odometry(self):
         return self._odom
 
+    def get_obstacles(self):
+        return self._obstacles
+
     def get_goal(self):
         return self._goal
 
@@ -49,16 +57,17 @@ def main():
     rospy.Subscriber("odom", Odometry, server.odometry_callback)
     rospy.Subscriber("global_map", OccupancyGrid, server.map_callback)
     rospy.Subscriber("move_base_simple/goal", PoseStamped, server.goal_callback)
+    rospy.Subscriber("obstacles", GridCells, server.obstacles_callback)
 
     pub = rospy.Publisher('path', Path, queue_size=10)
     rate = rospy.Rate(10)  # 10hz
-
 
     while not rospy.is_shutdown():
         current_position = server.get_odometry()
         goal_position = server.get_goal()
         current_map = server.get_map()
-        if current_position and goal_position:
+        obstacles = server.get_obstacles()
+        if current_position and goal_position and current_map:
             cur_orientation_list = [current_position.pose.pose.orientation.x,
                                     current_position.pose.pose.orientation.y,
                                     current_position.pose.pose.orientation.z,
@@ -76,10 +85,10 @@ def main():
                     goal_position.pose.position.y,
                     euler_from_quaternion(goal_orientation_list)[2]]
 
-            obstacleList = []
+            obstacleList = [(cell.x, cell.y, server.ROBOT_WIDTH / 2) for cell in obstacles.cells]
 
-            # rand_area = [current_map.info.height, current_map.info.width]
-            rand_area = [-10, 10]
+            rand_area = [current_map.info.height, current_map.info.width]
+            # rand_area = [-10, 10]
             rrt = RRT(start,
                       goal,
                       rand_area=rand_area,
@@ -87,31 +96,32 @@ def main():
             path = rrt.planning()
             # print(path)
             path_rviz = Path()
-            for x, y, yaw in path:
-                p = PoseStamped()
-                p.header = server.get_odometry().header
-                p.pose.position.x = x
-                p.pose.position.y = y
-                result = quaternion_from_euler(0, 0,  yaw)
-                p.pose.orientation.x = result[0]
-                p.pose.orientation.y = result[1]
-                p.pose.orientation.z = result[2]
-                p.pose.orientation.w = result[3]
+            if path:
+                for x, y, yaw in path:
+                    p = PoseStamped()
+                    p.header = server.get_odometry().header
+                    p.pose.position.x = x
+                    p.pose.position.y = y
+                    result = quaternion_from_euler(0, 0, yaw)
+                    p.pose.orientation.x = result[0]
+                    p.pose.orientation.y = result[1]
+                    p.pose.orientation.z = result[2]
+                    p.pose.orientation.w = result[3]
 
-                path_rviz.poses.append(p)
+                    path_rviz.poses.append(p)
             path_rviz.header = server.get_odometry().header
             path_rviz.header.stamp = rospy.Time.now()
             pub.publish(path_rviz)
 
-            # if path:
-            #     rrt.draw_graph()
-            #
-            #     plt.plot([x for (x, y) in path], [y for (x, y) in path], '-r')
-            #     plt.plot([x.x for x in rrt.new_node_list], [y.y for y in rrt.new_node_list], '-v')
-            #
-            #     plt.grid(True)
-            #     plt.pause(0.01)  # Need for Mac
-            #     plt.show()
+            if path:
+                rrt.draw_graph()
+
+                plt.plot([x for (x, y, z) in path], [y for (x, y, z) in path], '-r')
+                plt.plot([x.x for x in rrt.new_node_list], [y.y for y in rrt.new_node_list], '-v')
+
+                plt.grid(True)
+                plt.pause(0.01)  # Need for Mac
+                plt.show()
         rate.sleep()
         # rospy.spin()
 
@@ -121,4 +131,3 @@ if __name__ == '__main__':
         main()
     except rospy.ROSInterruptException:
         pass
-
