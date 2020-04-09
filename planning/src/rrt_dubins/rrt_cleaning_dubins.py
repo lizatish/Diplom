@@ -54,7 +54,7 @@ class RRT:
         start:Start Position [x,y]
         goal:Goal Position [x,y]
         obstacleList:obstacle Positions [[x,y,size],...]
-        randArea:Random Sampling Area [min,max]
+        randArea:Random Sampling Area [min,max]гр. 635 сообщение получила
 
         """
         # expand_dis - максимальная длина линий планирования
@@ -210,11 +210,13 @@ class RRT:
             i = j
             j = N
 
-        path = [[self.end.x, self.end.y]]
+        path = [[self.end.x, self.end.y, self.end_yaw]]
         for node in new_node_list[::-1]:
-            for (ix, iy) in zip(reversed(node.path_x), reversed(node.path_y)):
-                path.append([ix, iy])
-        path.append([self.start.x, self.start.y])
+            for (ix, iy, iyaw) in zip(reversed(node.path_x),
+                                      reversed(node.path_y),
+                                      reversed(node.path_yaw)):
+                path.append([ix, iy, iyaw])
+        path.append([self.start.x, self.start.y, self.start_yaw])
 
         new_node_list.insert(0, self.start)
         self.new_node_list = new_node_list
@@ -310,8 +312,8 @@ def main(gx=6.0, gy=10.0):
     ]  # [x, y, radius]
     # Set Initial parameters
     # Set Initial parameters
-    start = [0.0, 0.0, np.deg2rad(0.0)]
-    goal = [10.0, 10.0, np.deg2rad(0.0)]
+    start = [0.0, 0.0, np.deg2rad(0)]
+    goal = [10.0, 10.0, np.deg2rad(-90)]
     rrt = RRT(start,
               goal,
               rand_area=[-2, 15],
@@ -325,11 +327,14 @@ def main(gx=6.0, gy=10.0):
         # print(len(path))
         # Draw final path
 
-        if show_animation:
+        if not show_animation:
             rrt.draw_graph()
 
-            plt.plot([x for (x, y) in path], [y for (x, y) in path], '-r')
+            plt.plot([x for (x, y, yaw) in path], [y for (x, y, yaw) in path], '-r')
             plt.plot([x.x for x in rrt.new_node_list], [y.y for y in rrt.new_node_list], '-v')
+
+            for (x, y, yaw) in path[::2]:
+                dubins_path_planning.plot_arrow(x, y, yaw)
 
             plt.grid(True)
             plt.pause(0.01)  # Need for Mac

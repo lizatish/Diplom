@@ -50,14 +50,15 @@ def main():
     rospy.Subscriber("global_map", OccupancyGrid, server.map_callback)
     rospy.Subscriber("move_base_simple/goal", PoseStamped, server.goal_callback)
 
-    # pub = rospy.Publisher('chatter', String, queue_size=10)
+    pub = rospy.Publisher('path', Path, queue_size=10)
     rate = rospy.Rate(10)  # 10hz
+
 
     while not rospy.is_shutdown():
         current_position = server.get_odometry()
         goal_position = server.get_goal()
         current_map = server.get_map()
-        if current_position and current_map and goal_position:
+        if current_position and goal_position:
             cur_orientation_list = [current_position.pose.pose.orientation.x,
                                     current_position.pose.pose.orientation.y,
                                     current_position.pose.pose.orientation.z,
@@ -77,23 +78,42 @@ def main():
 
             obstacleList = []
 
-            rand_area = [current_map.info.height, current_map.info.width]
+            # rand_area = [current_map.info.height, current_map.info.width]
+            rand_area = [-10, 10]
             rrt = RRT(start,
                       goal,
                       rand_area=rand_area,
                       obstacle_list=obstacleList)
             path = rrt.planning()
             # print(path)
-            if path:
-                rrt.draw_graph()
+            path_rviz = Path()
+            for x, y, yaw in path:
+                p = PoseStamped()
+                p.header = server.get_odometry().header
+                p.pose.position.x = x
+                p.pose.position.y = y
+                result = quaternion_from_euler(0, 0,  yaw)
+                p.pose.orientation.x = result[0]
+                p.pose.orientation.y = result[1]
+                p.pose.orientation.z = result[2]
+                p.pose.orientation.w = result[3]
 
-                plt.plot([x for (x, y) in path], [y for (x, y) in path], '-r')
-                plt.plot([x.x for x in rrt.new_node_list], [y.y for y in rrt.new_node_list], '-v')
+                path_rviz.poses.append(p)
+            path_rviz.header = server.get_odometry().header
+            path_rviz.header.stamp = rospy.Time.now()
+            pub.publish(path_rviz)
 
-                plt.grid(True)
-                plt.pause(0.01)  # Need for Mac
-                plt.show()
+            # if path:
+            #     rrt.draw_graph()
+            #
+            #     plt.plot([x for (x, y) in path], [y for (x, y) in path], '-r')
+            #     plt.plot([x.x for x in rrt.new_node_list], [y.y for y in rrt.new_node_list], '-v')
+            #
+            #     plt.grid(True)
+            #     plt.pause(0.01)  # Need for Mac
+            #     plt.show()
         rate.sleep()
+        # rospy.spin()
 
 
 if __name__ == '__main__':
