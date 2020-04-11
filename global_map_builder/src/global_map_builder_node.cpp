@@ -21,6 +21,7 @@ void connectLocalAndGlobalMaps();
 void localMapCallback(nav_msgs::OccupancyGrid data);
 void globalMapMessageInitParams();
 void formGlobalMapMessage();
+void updateObstacles();
 
 // Текущая локальная карта
 static nav_msgs::OccupancyGrid localMap;
@@ -112,7 +113,6 @@ void connectLocalAndGlobalMaps(){
   double localMapSize = localMap.info.width;
   double yawAngle = tf::getYaw(currentPosition.orientation);
 
-  obstacles.cells.clear();
   float k = 0.9;
   for(int i = 0; i < localMapSize; i++){
     for(int j = 0; j < localMapSize; j++){
@@ -130,13 +130,22 @@ void connectLocalAndGlobalMaps(){
         if(localMap.data[localMapSize * j + i] == 50){
           continue;
         }
-        if (value >= 60){
-          geometry_msgs::Point p;
-          p.x =( x  - globalMapSize / 2)* mapResolution;
-          p.y = (y - globalMapSize / 2)* mapResolution ;
-          obstacles.cells.push_back(p);
-        }
+
         globalMap.data[globalMapSize * y + x] = value;
+      }
+    }
+  }
+  updateObstacles();
+}
+void updateObstacles(){
+  obstacles.cells.clear();
+  for(int i = 0; i < globalMapSize; i++){
+    for(int j = 0; j < globalMapSize; j++){
+      if (globalMap.data[globalMapSize * j + i] >= 60){
+        geometry_msgs::Point p;
+        p.x = (i  - globalMapSize / 2) * mapResolution;
+        p.y = (j - globalMapSize / 2) * mapResolution ;
+        obstacles.cells.push_back(p);
       }
     }
   }

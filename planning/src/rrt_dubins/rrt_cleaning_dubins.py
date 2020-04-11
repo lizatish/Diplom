@@ -8,6 +8,7 @@ author: AtsushiSakai(@Atsushi_twi)
 
 import math
 import random
+from itertools import tee
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -47,7 +48,7 @@ class RRT:
             self.path_yaw = []
 
     def __init__(self, start, goal, obstacle_list, rand_area,
-                 expand_dis=3.0, path_resolution=0.5, goal_sample_rate=5, max_iter=300):
+                 expand_dis=3.0, path_resolution=0.5, goal_sample_rate=5, max_iter=500):
         """
         Setting Parameter
 
@@ -74,7 +75,7 @@ class RRT:
 
         self.new_node_list = []
 
-        self.curvature = 1.0  # for dubins path
+        self.curvature = 3.0  # for dubins path
         self.goal_yaw_th = np.deg2rad(1.0)
         self.goal_xy_th = 0.5
 
@@ -93,8 +94,12 @@ class RRT:
 
             new_node = self.steer(nearest_node, rnd_node, self.expand_dis)
 
+            # starttime = timeit.default_timer()
             if self.check_collision(new_node, self.obstacle_list):
                 self.node_list.append(new_node)
+
+            # print(timeit.default_timer() - starttime)
+
             if animation and i % 5 == 0:
                 self.draw_graph(rnd_node)
 
@@ -245,8 +250,8 @@ class RRT:
         # for node in self.node_list:
         #     if node.parent:
         #         plt.plot(node.path_x, node.path_y, "-g")
-
-        for (ox, oy, size) in self.obstacle_list:
+        copy_obstacleList, _ = tee(self.obstacle_list, 2)
+        for (ox, oy, size) in copy_obstacleList:
             plt.plot(ox, oy, "ok", ms=30 * size)
 
         self.plot_start_goal_arrow()
@@ -254,7 +259,7 @@ class RRT:
         # plt.plot(self.end.x, self.end.y, "xr")
 
         plt.axis("equal")
-        plt.axis([-5, 20, -5, 20])
+        plt.axis([self.min_rand, self.max_rand, self.min_rand, self.max_rand])
         plt.grid(True)
         plt.pause(0.01)
 
@@ -272,13 +277,38 @@ class RRT:
 
         return minind
 
+    # @staticmethod
+    # def check_collision(node, obstacleList):
+    #
+    #     if node is None:
+    #         return False
+    #
+    #     for (ox, oy, size) in obstacleList:
+    #         dx_list = [ox - x for x in node.path_x]
+    #         dy_list = [oy - y for y in node.path_y]
+    #         d_list = [dx * dx + dy * dy for (dx, dy) in zip(dx_list, dy_list)]
+    #
+    #         if min(d_list) <= size ** 2:
+    #             return False  # collision
+    #
+    #     return True  # safe
+
     @staticmethod
-    def check_collision(node, obstacleList):
+    def check_collision2(node, obstacleList):
+
+        # self.draw_graph()
 
         if node is None:
             return False
 
-        for (ox, oy, size) in obstacleList:
+        nearest_obstacles = filter(lambda x: node.path_x[0] <= x.x <= node.path_x[-1] and
+                                             node.path_y[0] <= x.y <= node.path_y[-1], obstacleList)
+
+        # print(len(list(nearest_obstacles)), len(obstacleList))
+        size = 0.5 / 2
+        for p in nearest_obstacles:
+            ox = p.x
+            oy = p.y
             dx_list = [ox - x for x in node.path_x]
             dy_list = [oy - y for y in node.path_y]
             d_list = [dx * dx + dy * dy for (dx, dy) in zip(dx_list, dy_list)]
@@ -287,6 +317,37 @@ class RRT:
                 return False  # collision
 
         return True  # safe
+
+    def check_collision(self, node, obstacleList):
+        mapResolution = 0.04
+        ROBOT_HEIGHT = 0.25
+        ROBOT_WIDTH = 0.35
+
+        start_size_x = int(-ROBOT_HEIGHT / (2 * mapResolution))
+        start_size_y = int(-ROBOT_WIDTH / (2 * mapResolution))
+        finish_size_x = -start_size_x
+        finish_size_y = -start_size_y
+
+        for i in range(len(node.path_x) - 1):
+            x_robot_center = int((node.path_x[i] - obstacleList.info.origin.position.x)/ mapResolution)
+            y_robot_center = int((node.path_y[i] - obstacleList.info.origin.position.x) / mapResolution)
+            robot_yaw = math.atan2((node.path_y[i + 1] - node.path_y[i]),
+                                   (node.path_x[i + 1] - node.path_x[i]))
+
+            sin_yaw = math.sin(robot_yaw)
+            cos_yaw = math.cos(robot_yaw)
+
+            if 0 <= x_robot_center + finish_size_x < 500 and \
+                    0 <= y_robot_center + finish_size_y < 500 :
+                for i in range(start_size_x, finish_size_x + 1):
+                    for j in range(start_size_y, finish_size_y + 1):
+
+                        x_robot_size = int(x_robot_center + i * cos_yaw + j * sin_yaw)
+                        y_robot_size = int(y_robot_center - i * sin_yaw + j * cos_yaw)
+                        if int(obstacleList.data[500 * y_robot_size + x_robot_size]) > 75:
+                            return False
+
+        return True
 
     @staticmethod
     def calc_distance_and_angle(from_node, to_node):

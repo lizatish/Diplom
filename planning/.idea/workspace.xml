@@ -1,10 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="BranchesTreeState">
+    <expand>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:origin" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+    </expand>
+    <select />
+  </component>
   <component name="ChangeListManager">
     <list default="true" id="e105b0c2-fa08-4188-a3d2-93e7f4a17e5f" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/../global_map_builder/src/global_map_builder_node.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../global_map_builder/src/global_map_builder_node.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bin/path_planning_node" beforeDir="false" afterPath="$PROJECT_DIR$/bin/path_planning_node" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/rrt_dubins/rrt_cleaning_dubins.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/rrt_dubins/rrt_cleaning_dubins.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -24,7 +43,7 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="last_opened_file_path" value="$USER_HOME$/old_ws/liza_ws/src/planning" />
-    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
+    <property name="settings.editor.selected.configurable" value="reference.settings.ide.settings.file-colors" />
   </component>
   <component name="PyConsoleOptionsProvider">
     <option name="myPythonConsoleState">
@@ -128,8 +147,8 @@
     <recent_temporary>
       <list>
         <item itemvalue="Python.path_planning_node" />
-        <item itemvalue="Python.rrt_cleaning_dubins" />
         <item itemvalue="Python.scratch_1" />
+        <item itemvalue="Python.rrt_cleaning_dubins" />
         <item itemvalue="Python.rrt" />
       </list>
     </recent_temporary>
@@ -147,7 +166,23 @@
     </task>
     <servers />
   </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="oldMeFiltersMigrated" value="true" />
+  </component>
   <component name="WindowStateProjectService">
+    <state x="704" y="182" key="#Python" timestamp="1586453045040">
+      <screen x="67" y="27" width="1853" height="1053" />
+    </state>
+    <state x="704" y="182" key="#Python/67.27.1853.1053@67.27.1853.1053" timestamp="1586453045040" />
     <state x="451" y="210" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1586156625255">
       <screen x="67" y="27" width="1853" height="1053" />
     </state>
@@ -156,6 +191,10 @@
       <screen x="67" y="27" width="1853" height="1053" />
     </state>
     <state x="608" y="140" width="761" height="825" key="#path_planning_node/67.27.1853.1053@67.27.1853.1053" timestamp="1586336399292" />
+    <state x="424" y="34" width="1128" height="1036" key="CommitChangelistDialog2" timestamp="1586452791436">
+      <screen x="67" y="27" width="1853" height="1053" />
+    </state>
+    <state x="424" y="34" width="1128" height="1036" key="CommitChangelistDialog2/67.27.1853.1053@67.27.1853.1053" timestamp="1586452791436" />
     <state x="730" y="284" width="515" height="536" key="EnvironmentVariablesDialog" timestamp="1586156622168">
       <screen x="67" y="27" width="1853" height="1053" />
     </state>
@@ -164,45 +203,49 @@
       <screen x="67" y="27" width="1853" height="1053" />
     </state>
     <state x="736" y="310" key="FileChooserDialogImpl/67.27.1853.1053@67.27.1853.1053" timestamp="1586333913044" />
-    <state width="1826" height="347" key="GridCell.Tab.0.bottom" timestamp="1586441771955">
+    <state width="1826" height="213" key="GridCell.Tab.0.bottom" timestamp="1586601467974">
       <screen x="67" y="27" width="1853" height="1053" />
     </state>
-    <state width="1826" height="347" key="GridCell.Tab.0.bottom/67.27.1853.1053@67.27.1853.1053" timestamp="1586441771955" />
-    <state width="1826" height="347" key="GridCell.Tab.0.center" timestamp="1586441771954">
+    <state width="1826" height="213" key="GridCell.Tab.0.bottom/67.27.1853.1053@67.27.1853.1053" timestamp="1586601467974" />
+    <state width="1826" height="213" key="GridCell.Tab.0.center" timestamp="1586601467973">
       <screen x="67" y="27" width="1853" height="1053" />
     </state>
-    <state width="1826" height="347" key="GridCell.Tab.0.center/67.27.1853.1053@67.27.1853.1053" timestamp="1586441771954" />
-    <state width="1826" height="347" key="GridCell.Tab.0.left" timestamp="1586441771953">
+    <state width="1826" height="213" key="GridCell.Tab.0.center/67.27.1853.1053@67.27.1853.1053" timestamp="1586601467973" />
+    <state width="1826" height="213" key="GridCell.Tab.0.left" timestamp="1586601467973">
       <screen x="67" y="27" width="1853" height="1053" />
     </state>
-    <state width="1826" height="347" key="GridCell.Tab.0.left/67.27.1853.1053@67.27.1853.1053" timestamp="1586441771953" />
-    <state width="1826" height="347" key="GridCell.Tab.0.right" timestamp="1586441771954">
+    <state width="1826" height="213" key="GridCell.Tab.0.left/67.27.1853.1053@67.27.1853.1053" timestamp="1586601467973" />
+    <state width="1826" height="213" key="GridCell.Tab.0.right" timestamp="1586601467973">
       <screen x="67" y="27" width="1853" height="1053" />
     </state>
-    <state width="1826" height="347" key="GridCell.Tab.0.right/67.27.1853.1053@67.27.1853.1053" timestamp="1586441771954" />
-    <state width="1826" height="347" key="GridCell.Tab.1.bottom" timestamp="1586441771958">
+    <state width="1826" height="213" key="GridCell.Tab.0.right/67.27.1853.1053@67.27.1853.1053" timestamp="1586601467973" />
+    <state width="1826" height="319" key="GridCell.Tab.1.bottom" timestamp="1586601467964">
       <screen x="67" y="27" width="1853" height="1053" />
     </state>
-    <state width="1826" height="347" key="GridCell.Tab.1.bottom/67.27.1853.1053@67.27.1853.1053" timestamp="1586441771958" />
-    <state width="1826" height="347" key="GridCell.Tab.1.center" timestamp="1586441771956">
+    <state width="1826" height="319" key="GridCell.Tab.1.bottom/67.27.1853.1053@67.27.1853.1053" timestamp="1586601467964" />
+    <state width="1826" height="319" key="GridCell.Tab.1.center" timestamp="1586601467961">
       <screen x="67" y="27" width="1853" height="1053" />
     </state>
-    <state width="1826" height="347" key="GridCell.Tab.1.center/67.27.1853.1053@67.27.1853.1053" timestamp="1586441771956" />
-    <state width="1826" height="347" key="GridCell.Tab.1.left" timestamp="1586441771956">
+    <state width="1826" height="319" key="GridCell.Tab.1.center/67.27.1853.1053@67.27.1853.1053" timestamp="1586601467961" />
+    <state width="1826" height="319" key="GridCell.Tab.1.left" timestamp="1586601467961">
       <screen x="67" y="27" width="1853" height="1053" />
     </state>
-    <state width="1826" height="347" key="GridCell.Tab.1.left/67.27.1853.1053@67.27.1853.1053" timestamp="1586441771956" />
-    <state width="1826" height="347" key="GridCell.Tab.1.right" timestamp="1586441771957">
+    <state width="1826" height="319" key="GridCell.Tab.1.left/67.27.1853.1053@67.27.1853.1053" timestamp="1586601467961" />
+    <state width="1826" height="319" key="GridCell.Tab.1.right" timestamp="1586601467963">
       <screen x="67" y="27" width="1853" height="1053" />
     </state>
-    <state width="1826" height="347" key="GridCell.Tab.1.right/67.27.1853.1053@67.27.1853.1053" timestamp="1586441771957" />
-    <state x="279" y="136" key="SettingsEditor" timestamp="1586428193846">
+    <state width="1826" height="319" key="GridCell.Tab.1.right/67.27.1853.1053@67.27.1853.1053" timestamp="1586601467963" />
+    <state x="741" y="177" key="SettingsEditor" timestamp="1586453029574">
       <screen x="67" y="27" width="1853" height="1053" />
     </state>
-    <state x="279" y="136" key="SettingsEditor/67.27.1853.1053@67.27.1853.1053" timestamp="1586428193846" />
+    <state x="741" y="177" key="SettingsEditor/67.27.1853.1053@67.27.1853.1053" timestamp="1586453029574" />
     <state width="463" height="527" key="XDebugger.FullValuePopup" timestamp="1586427535065">
       <screen x="67" y="27" width="1853" height="1053" />
     </state>
     <state width="463" height="527" key="XDebugger.FullValuePopup/67.27.1853.1053@67.27.1853.1053" timestamp="1586427535065" />
+    <state x="67" y="213" width="957" height="678" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2" timestamp="1586547484051">
+      <screen x="67" y="27" width="1853" height="1053" />
+    </state>
+    <state x="67" y="213" width="957" height="678" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2/67.27.1853.1053@67.27.1853.1053" timestamp="1586547484051" />
   </component>
 </project>
