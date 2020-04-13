@@ -47,8 +47,8 @@ class RRT:
             self.yaw = yaw
             self.path_yaw = []
 
-    def __init__(self, start, goal, obstacle_list, rand_area,
-                 expand_dis=3.0, path_resolution=0.5, goal_sample_rate=5, max_iter=500):
+    def __init__(self, start, goal, glomal_map, rand_area,
+                 expand_dis=3.0, path_resolution=0.5, goal_sample_rate=5, max_iter=300):
         """
         Setting Parameter
 
@@ -70,7 +70,7 @@ class RRT:
         self.path_resolution = path_resolution
         self.goal_sample_rate = goal_sample_rate
         self.max_iter = max_iter
-        self.obstacle_list = obstacle_list
+        self.global_map = glomal_map
         self.node_list = []
 
         self.new_node_list = []
@@ -95,9 +95,8 @@ class RRT:
             new_node = self.steer(nearest_node, rnd_node, self.expand_dis)
 
             # starttime = timeit.default_timer()
-            if self.check_collision(new_node, self.obstacle_list):
+            if self.check_collision(new_node, self.global_map):
                 self.node_list.append(new_node)
-
             # print(timeit.default_timer() - starttime)
 
             if animation and i % 5 == 0:
@@ -105,7 +104,7 @@ class RRT:
 
             if self.calc_dist_to_goal(self.node_list[-1].x, self.node_list[-1].y) <= self.expand_dis:
                 final_node = self.steer(self.node_list[-1], self.end, self.expand_dis)
-                if self.check_collision(final_node, self.obstacle_list):
+                if self.check_collision(final_node, self.global_map):
                     path = self.generate_final_course(len(self.node_list) - 1)
                     if path is not None:
                         return path
@@ -183,26 +182,31 @@ class RRT:
             if i < j:
                 new_node = self.steer(path[i], path[j])
 
-                if self.check_collision(new_node, self.obstacle_list):
+                if self.check_collision(new_node, self.global_map):
 
-                    elem = path[i]
-                    next = path[j]
-                    if j == N:
-                        dubins_node2 = self.NodeDubins(next.x, next.y, self.end_yaw)
-                    else:
-                        next2 = path[j + 1]
-                        dubins_node2 = self.NodeDubins(next.x, next.y,
-                                                       math.atan2((next2.y - next.y), (next2.x - next.x)))
+                    current_elem = path[i]
+                    next_elem = path[j]
 
                     if i == 0:
-                        dubins_node1 = self.NodeDubins(elem.x, elem.y, self.start_yaw)
+                        start_angle = self.start_yaw
                     else:
-                        dubins_node1 = self.NodeDubins(elem.x, elem.y, math.atan2((next.y - elem.y), (next.x - elem.x)))
+                        start_angle = math.atan2((next_elem.y - current_elem.y), (next_elem.x - current_elem.x))
 
-                    answer = self.dubins_steer(dubins_node1, dubins_node2)
+                    if j == N:
+                        end_angle = self.end_yaw
+                    else:
+                        next2_elem = path[j + 1]
 
-                    if self.check_collision(answer, self.obstacle_list):
-                        new_node_list.append(answer)
+                        end_angle = math.atan2((next2_elem.y - next_elem.y), (next2_elem.x - next_elem.x))
+
+                    if end_angle >= math.pi * 2:
+                        print(end_angle)
+                    dubins_node1 = self.NodeDubins(current_elem.x, current_elem.y, start_angle)
+                    dubins_node2 = self.NodeDubins(next_elem.x, next_elem.y, end_angle)
+
+                    result_path = self.dubins_steer(dubins_node1, dubins_node2)
+                    if self.check_collision(result_path, self.global_map):
+                        new_node_list.append(result_path)
                     else:
                         j -= 1
                         continue
@@ -222,9 +226,6 @@ class RRT:
                                       reversed(node.path_yaw)):
                 path.append([ix, iy, iyaw])
         path.append([self.start.x, self.start.y, self.start_yaw])
-
-        new_node_list.insert(0, self.start)
-        self.new_node_list = new_node_list
         return path
 
     def calc_dist_to_goal(self, x, y):
@@ -250,8 +251,8 @@ class RRT:
         # for node in self.node_list:
         #     if node.parent:
         #         plt.plot(node.path_x, node.path_y, "-g")
-        copy_obstacleList, _ = tee(self.obstacle_list, 2)
-        for (ox, oy, size) in copy_obstacleList:
+        # copy_obstacleList, _ = tee(self.obstacle_list, 2)
+        for (ox, oy, size) in self.global_map:
             plt.plot(ox, oy, "ok", ms=30 * size)
 
         self.plot_start_goal_arrow()
@@ -277,38 +278,13 @@ class RRT:
 
         return minind
 
-    # @staticmethod
-    # def check_collision(node, obstacleList):
-    #
-    #     if node is None:
-    #         return False
-    #
-    #     for (ox, oy, size) in obstacleList:
-    #         dx_list = [ox - x for x in node.path_x]
-    #         dy_list = [oy - y for y in node.path_y]
-    #         d_list = [dx * dx + dy * dy for (dx, dy) in zip(dx_list, dy_list)]
-    #
-    #         if min(d_list) <= size ** 2:
-    #             return False  # collision
-    #
-    #     return True  # safe
-
     @staticmethod
-    def check_collision2(node, obstacleList):
-
-        # self.draw_graph()
+    def check_collision00(node, obstacleList):
 
         if node is None:
             return False
 
-        nearest_obstacles = filter(lambda x: node.path_x[0] <= x.x <= node.path_x[-1] and
-                                             node.path_y[0] <= x.y <= node.path_y[-1], obstacleList)
-
-        # print(len(list(nearest_obstacles)), len(obstacleList))
-        size = 0.5 / 2
-        for p in nearest_obstacles:
-            ox = p.x
-            oy = p.y
+        for (ox, oy, size) in obstacleList:
             dx_list = [ox - x for x in node.path_x]
             dy_list = [oy - y for y in node.path_y]
             d_list = [dx * dx + dy * dy for (dx, dy) in zip(dx_list, dy_list)]
@@ -318,7 +294,33 @@ class RRT:
 
         return True  # safe
 
-    def check_collision(self, node, obstacleList):
+    @staticmethod
+    def check_collision11(node, obstacleList):
+
+        # self.draw_graph()
+
+        if node is None:
+            return False
+
+        ROBOT_HEIGHT = 0.25
+        ROBOT_WIDTH = 0.35
+
+        for (x, y) in zip(node.path_x, node.path_y):
+            nearest_obstacles = filter(lambda ob: x - ROBOT_HEIGHT <= ob.x <= x + ROBOT_HEIGHT and
+                                                  y - ROBOT_WIDTH <= ob.y <= y + ROBOT_WIDTH, obstacleList)
+            for p in nearest_obstacles:
+                ox = p.x
+                oy = p.y
+                dx_list = ox - x
+                dy_list = oy - y
+                d_list = dx_list * dx_list + dy_list * dy_list
+
+                if d_list <= ROBOT_WIDTH ** 2:
+                    return False  # collision
+
+        return True  # safe
+
+    def check_collision(self, node, g_map):
         mapResolution = 0.04
         ROBOT_HEIGHT = 0.25
         ROBOT_WIDTH = 0.35
@@ -329,22 +331,22 @@ class RRT:
         finish_size_y = -start_size_y
 
         for i in range(len(node.path_x) - 1):
-            x_robot_center = int((node.path_x[i] - obstacleList.info.origin.position.x)/ mapResolution)
-            y_robot_center = int((node.path_y[i] - obstacleList.info.origin.position.x) / mapResolution)
+            x_robot_center = int((node.path_x[i] - g_map.info.origin.position.x) / mapResolution)
+            y_robot_center = int((node.path_y[i] - g_map.info.origin.position.x) / mapResolution)
             robot_yaw = math.atan2((node.path_y[i + 1] - node.path_y[i]),
                                    (node.path_x[i + 1] - node.path_x[i]))
 
             sin_yaw = math.sin(robot_yaw)
             cos_yaw = math.cos(robot_yaw)
 
-            if 0 <= x_robot_center + finish_size_x < 500 and \
-                    0 <= y_robot_center + finish_size_y < 500 :
+            if 0 <= x_robot_center + finish_size_x < g_map.info.height and \
+                    0 <= y_robot_center + finish_size_y < g_map.info.height:
                 for i in range(start_size_x, finish_size_x + 1):
                     for j in range(start_size_y, finish_size_y + 1):
 
                         x_robot_size = int(x_robot_center + i * cos_yaw + j * sin_yaw)
                         y_robot_size = int(y_robot_center - i * sin_yaw + j * cos_yaw)
-                        if int(obstacleList.data[500 * y_robot_size + x_robot_size]) > 75:
+                        if int(g_map.data[g_map.info.height * y_robot_size + x_robot_size]) > 75:
                             return False
 
         return True
@@ -356,63 +358,3 @@ class RRT:
         d = math.hypot(dx, dy)
         theta = math.atan2(dy, dx)
         return d, theta
-
-
-def main(gx=6.0, gy=10.0):
-    # print("start " + __file__)
-
-    # ====Search Path with RRT====
-    obstacleList = [
-        (5, 5, 1),
-        (3, 6, 2),
-        (3, 8, 2),
-        (3, 10, 2),
-        (7, 5, 2),
-        (9, 5, 2),
-        (8, 10, 1)
-    ]  # [x, y, radius]
-    # Set Initial parameters
-    # Set Initial parameters
-    start = [0.0, 0.0, np.deg2rad(0)]
-    goal = [10.0, 10.0, np.deg2rad(-90)]
-    rrt = RRT(start,
-              goal,
-              rand_area=[-2, 15],
-              obstacle_list=obstacleList)
-    path = rrt.planning(animation=show_animation)
-
-    if path is None or len(path) < 2:
-        # print("Cannot find path")
-        return 1
-    else:
-        # print(len(path))
-        # Draw final path
-
-        if not show_animation:
-            rrt.draw_graph()
-
-            plt.plot([x for (x, y, yaw) in path], [y for (x, y, yaw) in path], '-r')
-            plt.plot([x.x for x in rrt.new_node_list], [y.y for y in rrt.new_node_list], '-v')
-
-            for (x, y, yaw) in path[::2]:
-                dubins_path_planning.plot_arrow(x, y, yaw)
-
-            plt.grid(True)
-            plt.pause(0.01)  # Need for Mac
-            plt.show()
-        return 0
-
-
-if __name__ == '__main__':
-    number = 10
-    result = []
-    summa = 0
-    for i in range(number):
-        starttime = timeit.default_timer()
-        k = main()
-        result.append(timeit.default_timer() - starttime)
-        summa += k
-    print('Среднее время', sum(result) / number)
-    print('Максимум', max(result))
-    print('Минимум', min(result))
-    print('Процент ненайденных путей', summa / number * 100)

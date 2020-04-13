@@ -1,4 +1,6 @@
 #! /usr/bin/env python
+import numpy
+
 from rrt_dubins.rrt_cleaning_dubins import RRT
 import numpy as np
 
@@ -51,6 +53,9 @@ class Server:
         return self._goal
 
 
+xyzw_array = lambda o: numpy.array([o.x, o.y, o.z, o.w])
+
+
 def main():
     server = Server()
     rospy.init_node('rrt_path_planner', anonymous=True)
@@ -63,28 +68,22 @@ def main():
     pub = rospy.Publisher('path', Path, queue_size=10)
     rate = rospy.Rate(100)  # 10hz
 
+    result_ = []
+    number = 0
+    summa = 0
+
     while not rospy.is_shutdown():
         current_position = server.get_odometry()
         goal_position = server.get_goal()
         current_map = server.get_map()
         obstacles = server.get_obstacles()
         if current_position and goal_position and current_map:
-            cur_orientation_list = [current_position.pose.pose.orientation.x,
-                                    current_position.pose.pose.orientation.y,
-                                    current_position.pose.pose.orientation.z,
-                                    current_position.pose.pose.orientation.w]
-            goal_orientation_list = [goal_position.pose.orientation.x,
-                                     goal_position.pose.orientation.y,
-                                     goal_position.pose.orientation.z,
-                                     goal_position.pose.orientation.w]
-
-            # rospy.loginfo("True")
             start = [current_position.pose.pose.position.x,
                      current_position.pose.pose.position.y,
-                     euler_from_quaternion(cur_orientation_list)[2]]
+                     euler_from_quaternion(xyzw_array(current_position.pose.pose.orientation))[2]]
             goal = [goal_position.pose.position.x,
                     goal_position.pose.position.y,
-                    euler_from_quaternion(goal_orientation_list)[2]]
+                    euler_from_quaternion(xyzw_array(goal_position.pose.orientation))[2]]
 
             # obstacleList = [(cell.x, cell.y, server.ROBOT_WIDTH / 2) for cell in obstacles.cells]
             # obstacleList = obstacles.cells
@@ -92,17 +91,21 @@ def main():
             # obstacleList = map(lambda cell: (cell.x, cell.y, server.ROBOT_WIDTH / 2), obstacles.cells)
             # obstacleList = obstacles.cells
             obstacleList = current_map
-            rand_area = [-current_map.info.height * 0.04, current_map.info.height* 0.04]
-            # rand_area = [-10, 10]
+            rand_area = [-current_map.info.height * current_map.info.resolution,
+                         current_map.info.height * current_map.info.resolution]
             rrt = RRT(start,
                       goal,
                       rand_area=rand_area,
-                      obstacle_list=obstacleList)
+                      glomal_map=obstacleList)
 
             starttime = timeit.default_timer()
             path = rrt.planning()
-            print('Время', timeit.default_timer() - starttime, 'Найден:', bool(path))
+            result_.append(timeit.default_timer() - starttime)
+            if not path:
+                summa += 1
 
+            number += 1
+            print('Время', timeit.default_timer() - starttime, 'Найден:', bool(path))
 
             # print(path)
             path_rviz = Path()
@@ -135,6 +138,11 @@ def main():
             #     plt.show()
         rate.sleep()
         # rospy.spin()
+
+    print('Среднее время', sum(result_) / number)
+    print('Максимум', max(result_))
+    print('Минимум', min(result_))
+    print('Процент ненайденных путей', summa / number * 100)
 
 
 if __name__ == '__main__':
