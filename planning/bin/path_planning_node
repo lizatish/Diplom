@@ -66,6 +66,7 @@ def main():
     rospy.Subscriber("obstacles", GridCells, server.obstacles_callback)
 
     pub = rospy.Publisher('path', Path, queue_size=10)
+
     rate = rospy.Rate(100)  # 10hz
 
     result_ = []
@@ -73,11 +74,13 @@ def main():
     summa = 0
 
     while not rospy.is_shutdown():
+
         current_position = server.get_odometry()
         goal_position = server.get_goal()
         current_map = server.get_map()
         obstacles = server.get_obstacles()
-        if current_position and goal_position and current_map:
+        # print(goal_position)
+        if current_position and goal_position and current_map and obstacles :
             start = [*xy_array(current_position.pose.pose.position),
                      euler_from_quaternion(xyzw_array(current_position.pose.pose.orientation))[2]]
             goal = [*xy_array(goal_position.pose.position),

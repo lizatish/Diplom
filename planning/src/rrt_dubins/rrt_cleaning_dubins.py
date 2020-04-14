@@ -48,7 +48,7 @@ class RRT:
             self.path_yaw = []
 
     def __init__(self, start, goal, glomal_map, rand_area, obstacles,
-                 expand_dis=1, path_resolution=0.5, goal_sample_rate=5, max_iter=100):
+                 expand_dis=1, path_resolution=0.5, goal_sample_rate=5, max_iter=25):
         """
         Setting Parameter
 
@@ -292,7 +292,7 @@ class RRT:
         return minind
 
     @staticmethod
-    def check_collision00(node, obstacleList):
+    def check_collision5(node, obstacleList):
 
         if node is None:
             return False
@@ -308,7 +308,7 @@ class RRT:
         return True  # safe
 
     @staticmethod
-    def check_collision11(node, obstacleList):
+    def check_collision88(node, obstacleList):
 
         # self.draw_graph()
 
