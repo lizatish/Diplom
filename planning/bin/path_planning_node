@@ -2,11 +2,10 @@
 import numpy
 
 from rrt_dubins.rrt_cleaning_dubins import RRT
-import numpy as np
 
 import rospy
 from nav_msgs.msg import Odometry, OccupancyGrid, Path, GridCells
-from geometry_msgs.msg import Pose, Point, PoseStamped
+from geometry_msgs.msg import PoseStamped
 from tf.transformations import euler_from_quaternion, quaternion_from_euler
 import matplotlib.pyplot as plt
 import timeit
@@ -54,6 +53,7 @@ class Server:
 
 
 xyzw_array = lambda o: numpy.array([o.x, o.y, o.z, o.w])
+xy_array = lambda o: numpy.array([o.x, o.y])
 
 
 def main():
@@ -78,11 +78,9 @@ def main():
         current_map = server.get_map()
         obstacles = server.get_obstacles()
         if current_position and goal_position and current_map:
-            start = [current_position.pose.pose.position.x,
-                     current_position.pose.pose.position.y,
+            start = [*xy_array(current_position.pose.pose.position),
                      euler_from_quaternion(xyzw_array(current_position.pose.pose.orientation))[2]]
-            goal = [goal_position.pose.position.x,
-                    goal_position.pose.position.y,
+            goal = [*xy_array(goal_position.pose.position),
                     euler_from_quaternion(xyzw_array(goal_position.pose.orientation))[2]]
 
             # obstacleList = [(cell.x, cell.y, server.ROBOT_WIDTH / 2) for cell in obstacles.cells]
@@ -95,8 +93,10 @@ def main():
                          current_map.info.height * current_map.info.resolution]
             rrt = RRT(start,
                       goal,
+                      obstacles=obstacles.cells,
                       rand_area=rand_area,
-                      glomal_map=obstacleList)
+                      glomal_map=obstacleList
+                     )
 
             starttime = timeit.default_timer()
             path = rrt.planning()
@@ -120,7 +120,6 @@ def main():
                     p.pose.orientation.y = result[1]
                     p.pose.orientation.z = result[2]
                     p.pose.orientation.w = result[3]
-
                     path_rviz.poses.append(p)
 
                 path_rviz.header = server.get_odometry().header
@@ -143,6 +142,7 @@ def main():
     print('Максимум', max(result_))
     print('Минимум', min(result_))
     print('Процент ненайденных путей', summa / number * 100)
+    print('Кол-во пройденных итераций', number)
 
 
 if __name__ == '__main__':

@@ -47,8 +47,8 @@ class RRT:
             self.yaw = yaw
             self.path_yaw = []
 
-    def __init__(self, start, goal, glomal_map, rand_area,
-                 expand_dis=3.0, path_resolution=0.5, goal_sample_rate=5, max_iter=300):
+    def __init__(self, start, goal, glomal_map, rand_area, obstacles,
+                 expand_dis=1, path_resolution=0.5, goal_sample_rate=5, max_iter=100):
         """
         Setting Parameter
 
@@ -59,6 +59,9 @@ class RRT:
 
         """
         # expand_dis - максимальная длина линий планирования
+
+        self.obstacles = obstacles
+
         self.start = self.Node(start[0], start[1])
         self.end = self.Node(goal[0], goal[1])
         self.start_yaw = start[2]
@@ -190,17 +193,14 @@ class RRT:
                     if i == 0:
                         start_angle = self.start_yaw
                     else:
-                        start_angle = math.atan2((next_elem.y - current_elem.y), (next_elem.x - current_elem.x))
+                        start_angle = new_node_list[-1].path_yaw[-1]
 
                     if j == N:
                         end_angle = self.end_yaw
                     else:
                         next2_elem = path[j + 1]
-
                         end_angle = math.atan2((next2_elem.y - next_elem.y), (next2_elem.x - next_elem.x))
 
-                    if end_angle >= math.pi * 2:
-                        print(end_angle)
                     dubins_node1 = self.NodeDubins(current_elem.x, current_elem.y, start_angle)
                     dubins_node2 = self.NodeDubins(next_elem.x, next_elem.y, end_angle)
 
@@ -235,8 +235,18 @@ class RRT:
 
     def get_random_node(self):
         if random.randint(0, 100) > self.goal_sample_rate:
-            rnd = self.Node(random.uniform(self.min_rand, self.max_rand),
-                            random.uniform(self.min_rand, self.max_rand))
+            nearest_ind = self.get_nearest_node_index(self.node_list, self.end)
+            nearest_node = self.node_list[nearest_ind]
+            radius = math.hypot(abs(nearest_node.y - self.end.y), abs(nearest_node.y - self.end.x))
+
+            # rnd = self.Node(random.uniform(nearest_node.x - self.end.x/2, self.end.x + self.end.x/2),
+            #                 random.uniform(nearest_node.y - self.end.x/2,self.end.y + self.end.x/2))
+
+            rnd = self.Node(random.uniform(self.end.x - 1.5*radius, self.end.x + 1.5*radius),
+                            random.uniform(self.end.y - 1.5*radius, self.end.y + 1.5*radius))
+
+            # rnd = self.Node(random.uniform(self.min_rand, self.max_rand),
+            #                 random.uniform(self.min_rand, self.max_rand))
         else:  # goal point sampling
             rnd = self.Node(self.end.x, self.end.y)
         return rnd
@@ -248,11 +258,14 @@ class RRT:
                                      lambda event: [exit(0) if event.key == 'escape' else None])
         if rnd is not None:
             plt.plot(rnd.x, rnd.y, "^k")
-        # for node in self.node_list:
-        #     if node.parent:
-        #         plt.plot(node.path_x, node.path_y, "-g")
+        for node in self.node_list:
+            if node.parent:
+                plt.plot(node.path_x, node.path_y, "-g")
         # copy_obstacleList, _ = tee(self.obstacle_list, 2)
-        for (ox, oy, size) in self.global_map:
+        for p in self.obstacles:
+            ox = p.x
+            oy = p.y
+            size = 0.35/2
             plt.plot(ox, oy, "ok", ms=30 * size)
 
         self.plot_start_goal_arrow()
@@ -321,18 +334,18 @@ class RRT:
         return True  # safe
 
     def check_collision(self, node, g_map):
-        mapResolution = 0.04
         ROBOT_HEIGHT = 0.25
         ROBOT_WIDTH = 0.35
 
-        start_size_x = int(-ROBOT_HEIGHT / (2 * mapResolution))
-        start_size_y = int(-ROBOT_WIDTH / (2 * mapResolution))
+        # Габариты робота в пересчете на ячейки карты
+        start_size_x = int(-ROBOT_HEIGHT / (2 * g_map.info.resolution))
+        start_size_y = int(-ROBOT_WIDTH / (2 * g_map.info.resolution))
         finish_size_x = -start_size_x
         finish_size_y = -start_size_y
 
         for i in range(len(node.path_x) - 1):
-            x_robot_center = int((node.path_x[i] - g_map.info.origin.position.x) / mapResolution)
-            y_robot_center = int((node.path_y[i] - g_map.info.origin.position.x) / mapResolution)
+            x_robot_center = int((node.path_x[i] - g_map.info.origin.position.x) / g_map.info.resolution)
+            y_robot_center = int((node.path_y[i] - g_map.info.origin.position.x) / g_map.info.resolution)
             robot_yaw = math.atan2((node.path_y[i + 1] - node.path_y[i]),
                                    (node.path_x[i + 1] - node.path_x[i]))
 
