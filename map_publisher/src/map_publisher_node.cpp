@@ -71,8 +71,8 @@ int main(int argc, char **argv){
       obstacles_pub.publish(obstacles);
       ROS_INFO("Publish global map");
 
-      isCameOdom = false;
-      isActualScanData = false;
+//      isCameOdom = false;
+//      isActualScanData = false;
 
     }
 
@@ -93,7 +93,7 @@ void odometryCallback(const nav_msgs::Odometry data){
   currentPosition = data.pose.pose;
 
   // Координата смещения лазера относительно центра платформы
-  double laserOffsetX = 0.24;
+  double laserOffsetX = 0.25;
   double laserOffsetY = 0;
   // Составляющая поворота
   double laserRotationX = laserOffsetX * cos(yawAngle) - laserOffsetY * sin(yawAngle);
@@ -221,7 +221,7 @@ void init_params(){
   localMap.info.resolution = mapResolution;
   localMap.info.origin.position.x = -localMapSize * mapResolution/2;
   localMap.info.origin.position.y = -localMapSize * mapResolution/2;
-  localMap.header.frame_id = "/laser";
+  localMap.header.frame_id = "/odom";
   localMap.header.stamp = ros::Time::now();
   localMap.data.resize(localMap.info.height * localMap.info.width);
 }

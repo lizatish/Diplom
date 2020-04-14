@@ -8,7 +8,6 @@ author: AtsushiSakai(@Atsushi_twi)
 
 import math
 import random
-from itertools import tee
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -48,7 +47,7 @@ class RRT:
             self.path_yaw = []
 
     def __init__(self, start, goal, glomal_map, rand_area, obstacles,
-                 expand_dis=1, path_resolution=0.5, goal_sample_rate=5, max_iter=25):
+                 expand_dis=1, path_resolution=0.5, goal_sample_rate=5, max_iter=50):
         """
         Setting Parameter
 
@@ -183,36 +182,34 @@ class RRT:
         path.reverse()
         while i < N:
             if i < j:
-                new_node = self.steer(path[i], path[j])
+                # new_node = self.steer(path[i], path[j])
 
-                if self.check_collision(new_node, self.global_map):
+                # if self.check_collision(new_node, self.global_map):
 
-                    current_elem = path[i]
-                    next_elem = path[j]
+                current_elem = path[i]
+                next_elem = path[j]
 
-                    if i == 0:
-                        start_angle = self.start_yaw
-                    else:
-                        start_angle = new_node_list[-1].path_yaw[-1]
+                if i == 0:
+                    start_angle = self.start_yaw
+                else:
+                    start_angle = new_node_list[-1].path_yaw[-1]
 
-                    if j == N:
-                        end_angle = self.end_yaw
-                    else:
-                        next2_elem = path[j + 1]
-                        end_angle = math.atan2((next2_elem.y - next_elem.y), (next2_elem.x - next_elem.x))
+                if j == N:
+                    end_angle = self.end_yaw
+                else:
+                    next2_elem = path[j + 1]
+                    end_angle = math.atan2((next2_elem.y - next_elem.y), (next2_elem.x - next_elem.x))
 
-                    dubins_node1 = self.NodeDubins(current_elem.x, current_elem.y, start_angle)
-                    dubins_node2 = self.NodeDubins(next_elem.x, next_elem.y, end_angle)
+                dubins_node1 = self.NodeDubins(current_elem.x, current_elem.y, start_angle)
+                dubins_node2 = self.NodeDubins(next_elem.x, next_elem.y, end_angle)
 
-                    result_path = self.dubins_steer(dubins_node1, dubins_node2)
-                    if self.check_collision(result_path, self.global_map):
-                        new_node_list.append(result_path)
-                    else:
-                        j -= 1
-                        continue
+                result_path = self.dubins_steer(dubins_node1, dubins_node2)
+                if self.check_collision(result_path, self.global_map):
+                    new_node_list.append(result_path)
                 else:
                     j -= 1
                     continue
+
             # 'это мое нововведение против зацикливания
             if i == j:
                 return
@@ -242,8 +239,8 @@ class RRT:
             # rnd = self.Node(random.uniform(nearest_node.x - self.end.x/2, self.end.x + self.end.x/2),
             #                 random.uniform(nearest_node.y - self.end.x/2,self.end.y + self.end.x/2))
 
-            rnd = self.Node(random.uniform(self.end.x - 1.5*radius, self.end.x + 1.5*radius),
-                            random.uniform(self.end.y - 1.5*radius, self.end.y + 1.5*radius))
+            rnd = self.Node(random.uniform(self.end.x - 1.5 * radius, self.end.x + 1.5 * radius),
+                            random.uniform(self.end.y - 1.5 * radius, self.end.y + 1.5 * radius))
 
             # rnd = self.Node(random.uniform(self.min_rand, self.max_rand),
             #                 random.uniform(self.min_rand, self.max_rand))
@@ -265,7 +262,7 @@ class RRT:
         for p in self.obstacles:
             ox = p.x
             oy = p.y
-            size = 0.35/2
+            size = 0.35 / 2
             plt.plot(ox, oy, "ok", ms=30 * size)
 
         self.plot_start_goal_arrow()

@@ -113,7 +113,7 @@ def main():
             # print(path)
             path_rviz = Path()
             if path:
-                for x, y, yaw in path:
+                for x, y, yaw in path[::5]:
                     p = PoseStamped()
                     p.header = server.get_odometry().header
                     p.pose.position.x = x
