@@ -2,6 +2,7 @@
 import numpy
 
 from rrt_dubins.rrt_cleaning_dubins import RRT
+from rrt_dubins.rrt_star_dubins import RRTStarDubins
 
 import rospy
 from nav_msgs.msg import Odometry, OccupancyGrid, Path, GridCells
@@ -85,7 +86,7 @@ def main():
                      euler_from_quaternion(xyzw_array(current_position.pose.pose.orientation))[2]]
             goal = [*xy_array(goal_position.pose.position),
                     euler_from_quaternion(xyzw_array(goal_position.pose.orientation))[2]]
-
+            print('Find')
             # obstacleList = [(cell.x, cell.y, server.ROBOT_WIDTH / 2) for cell in obstacles.cells]
             # obstacleList = obstacles.cells
 
@@ -96,7 +97,7 @@ def main():
                          current_map.info.height * current_map.info.resolution]
             rrt = RRT(start,
                       goal,
-                      obstacles=obstacles.cells,
+                      obstacles=obstacleList,
                       rand_area=rand_area,
                       glomal_map=obstacleList
                      )
@@ -128,6 +129,7 @@ def main():
                 path_rviz.header = server.get_odometry().header
                 path_rviz.header.stamp = rospy.Time.now()
                 pub.publish(path_rviz)
+                break
 
             # if path:
             #     rrt.draw_graph()
@@ -140,12 +142,12 @@ def main():
             #     plt.show()
         rate.sleep()
         # rospy.spin()
-
-    print('Среднее время', sum(result_) / number)
-    print('Максимум', max(result_))
-    print('Минимум', min(result_))
-    print('Процент ненайденных путей', summa / number * 100)
-    print('Кол-во пройденных итераций', number)
+    print('Общее время', sum(result_))
+    # print('Среднее время', sum(result_) / number)
+    # print('Максимум', max(result_))
+    # print('Минимум', min(result_))
+    # print('Процент ненайденных путей', summa / number * 100)
+    # print('Кол-во пройденных итераций', number)
 
 
 if __name__ == '__main__':

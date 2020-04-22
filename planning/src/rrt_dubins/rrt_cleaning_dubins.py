@@ -47,7 +47,7 @@ class RRT:
             self.path_yaw = []
 
     def __init__(self, start, goal, glomal_map, rand_area, obstacles,
-                 expand_dis=1, path_resolution=0.5, goal_sample_rate=5, max_iter=50):
+                 expand_dis=0.6, path_resolution=0.5, goal_sample_rate=5, max_iter=100):
         """
         Setting Parameter
 
@@ -87,6 +87,7 @@ class RRT:
 
         animation: flag for animation on or off
         """
+        starttime = timeit.default_timer()
 
         self.node_list = [self.start]
         for i in range(self.max_iter):
@@ -110,6 +111,10 @@ class RRT:
                     path = self.generate_final_course(len(self.node_list) - 1)
                     if path is not None:
                         return path
+
+            # Проверка на максимальное время
+            if timeit.default_timer() - starttime >= 1.5:
+                return None
 
             if animation and i % 5:
                 self.draw_graph(rnd_node)
@@ -239,8 +244,9 @@ class RRT:
             # rnd = self.Node(random.uniform(nearest_node.x - self.end.x/2, self.end.x + self.end.x/2),
             #                 random.uniform(nearest_node.y - self.end.x/2,self.end.y + self.end.x/2))
 
-            rnd = self.Node(random.uniform(self.end.x - 1.5 * radius, self.end.x + 1.5 * radius),
-                            random.uniform(self.end.y - 1.5 * radius, self.end.y + 1.5 * radius))
+            k = 1.2
+            rnd = self.Node(random.uniform(self.end.x - k * radius, self.end.x + k * radius),
+                            random.uniform(self.end.y - k * radius, self.end.y + k * radius))
 
             # rnd = self.Node(random.uniform(self.min_rand, self.max_rand),
             #                 random.uniform(self.min_rand, self.max_rand))
