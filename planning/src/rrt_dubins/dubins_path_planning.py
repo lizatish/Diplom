@@ -163,10 +163,10 @@ def dubins_path_planning_from_origin(end_x, end_y, end_yaw, curvature, step_size
             best_cost = cost
     lengths = [bt, bp, bq]
 
-    px, py, pyaw, directions = generate_local_course(
+    px, py, pyaw, directions, modes = generate_local_course(
         sum(lengths), lengths, best_mode, curvature, step_size)
 
-    return px, py, pyaw, best_mode, best_cost
+    return px, py, pyaw, best_mode, best_cost, modes
 
 
 def interpolate(ind, length, mode, max_curvature, origin_x, origin_y, origin_yaw, path_x, path_y, path_yaw, directions):
@@ -227,7 +227,7 @@ def dubins_path_planning(sx, sy, syaw, ex, ey, eyaw, c, step_size=0.1):
     ley = - math.sin(syaw) * ex + math.cos(syaw) * ey
     leyaw = eyaw - syaw
 
-    lpx, lpy, lpyaw, mode, clen = dubins_path_planning_from_origin(
+    lpx, lpy, lpyaw, mode, clen, modes = dubins_path_planning_from_origin(
         lex, ley, leyaw, c, step_size)
 
     px = [math.cos(-syaw) * x + math.sin(-syaw)
@@ -236,7 +236,7 @@ def dubins_path_planning(sx, sy, syaw, ex, ey, eyaw, c, step_size=0.1):
           * y + sy for x, y in zip(lpx, lpy)]
     pyaw = [pi_2_pi(iyaw + syaw) for iyaw in lpyaw]
 
-    return px, py, pyaw, mode, clen
+    return px, py, pyaw, mode, clen, modes
 
 
 def generate_local_course(total_length, lengths, mode, max_curvature, step_size):
@@ -246,6 +246,7 @@ def generate_local_course(total_length, lengths, mode, max_curvature, step_size)
     path_y = [0.0 for _ in range(n_point)]
     path_yaw = [0.0 for _ in range(n_point)]
     directions = [0.0 for _ in range(n_point)]
+    modes = ['' for _ in range(n_point)]
     ind = 1
 
     if lengths[0] > 0.0:
@@ -254,7 +255,7 @@ def generate_local_course(total_length, lengths, mode, max_curvature, step_size)
         directions[0] = -1
 
     ll = 0.0
-
+    ind_ = 0
     for (m, l, i) in zip(mode, lengths, range(len(mode))):
         if l > 0.0:
             d = step_size
@@ -272,18 +273,23 @@ def generate_local_course(total_length, lengths, mode, max_curvature, step_size)
 
         while abs(pd) <= abs(l):
             ind += 1
+
             path_x, path_y, path_yaw, directions = interpolate(
                 ind, pd, m, max_curvature, origin_x, origin_y, origin_yaw, path_x, path_y, path_yaw, directions)
             pd += d
+            modes[ind_] = m
+            ind_ += 1
 
         ll = l - pd - d  # calc remain length
 
         ind += 1
         path_x, path_y, path_yaw, directions = interpolate(
             ind, l, m, max_curvature, origin_x, origin_y, origin_yaw, path_x, path_y, path_yaw, directions)
+        modes[ind_] = m
+        ind_ += 1
 
     if len(path_x) <= 1:
-        return [], [], [], []
+        return [], [], [], [], []
 
     # remove unused data
     while len(path_x) >= 1 and path_x[-1] == 0.0:
@@ -291,8 +297,9 @@ def generate_local_course(total_length, lengths, mode, max_curvature, step_size)
         path_y.pop()
         path_yaw.pop()
         directions.pop()
+        modes.pop()
 
-    return path_x, path_y, path_yaw, directions
+    return path_x, path_y, path_yaw, directions, modes
 
 
 def plot_arrow(x, y, yaw, length=1.0, width=0.5, fc="r", ec="k"):  # pragma: no cover

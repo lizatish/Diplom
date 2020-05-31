@@ -51,7 +51,7 @@ int main(int argc, char **argv){
   ros::Subscriber odom_sub = m.subscribe("/odom", 8, odometryCallback);
   ros::Subscriber scan_sub = m.subscribe("/scan", 8, laserScanCallback);
   ros::Publisher global_map_pub = m.advertise<nav_msgs::OccupancyGrid>("/global_map", 2);
-  ros::Publisher obstacles_pub = m.advertise<nav_msgs::GridCells>("/obstacles", 2);
+//  ros::Publisher obstacles_pub = m.advertise<nav_msgs::GridCells>("/obstacles", 2);
   ros::Publisher local_map_pub = m.advertise<nav_msgs::OccupancyGrid>("/local_map", 2);
 
   init_params();
@@ -68,7 +68,7 @@ int main(int argc, char **argv){
 
       global_map_pub.publish(globalMap);
       local_map_pub.publish(localMap);
-      obstacles_pub.publish(obstacles);
+//      obstacles_pub.publish(obstacles);
       ROS_INFO("Publish global map");
 
 //      isCameOdom = false;

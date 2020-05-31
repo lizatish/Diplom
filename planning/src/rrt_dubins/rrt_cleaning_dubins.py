@@ -44,9 +44,10 @@ class RRT:
             super().__init__(x, y)
             self.cost = 0
             self.yaw = yaw
+            self.path_mode = []
             self.path_yaw = []
 
-    def __init__(self, start, goal, glomal_map, rand_area, obstacles,
+    def __init__(self, start, goal, glomal_map, rand_area,
                  expand_dis=0.6, path_resolution=0.5, goal_sample_rate=5, max_iter=100):
         """
         Setting Parameter
@@ -59,7 +60,7 @@ class RRT:
         """
         # expand_dis - максимальная длина линий планирования
 
-        self.obstacles = obstacles
+        # self.obstacles = obstacles
 
         self.start = self.Node(start[0], start[1])
         self.end = self.Node(goal[0], goal[1])
@@ -152,7 +153,7 @@ class RRT:
 
     def dubins_steer(self, from_node, to_node):
 
-        px, py, pyaw, mode, course_length = dubins_path_planning.dubins_path_planning(
+        px, py, pyaw, mode, course_length, modes = dubins_path_planning.dubins_path_planning(
             from_node.x, from_node.y, from_node.yaw,
             to_node.x, to_node.y, to_node.yaw, self.curvature)
 
@@ -167,6 +168,7 @@ class RRT:
         new_node.path_x = px
         new_node.path_y = py
         new_node.path_yaw = pyaw
+        new_node.path_mode = modes
         new_node.cost += course_length
         new_node.parent = from_node
 
@@ -221,13 +223,17 @@ class RRT:
             i = j
             j = N
 
-        path = [[self.end.x, self.end.y, self.end_yaw]]
+        if new_node_list:
+            path = [[self.end.x, self.end.y, self.end_yaw, new_node_list[-1].path_mode[-1]]]
         for node in new_node_list[::-1]:
-            for (ix, iy, iyaw) in zip(reversed(node.path_x),
-                                      reversed(node.path_y),
-                                      reversed(node.path_yaw)):
-                path.append([ix, iy, iyaw])
-        path.append([self.start.x, self.start.y, self.start_yaw])
+            for (ix, iy, iyaw, imode) in zip(reversed(node.path_x),
+                                             reversed(node.path_y),
+                                             reversed(node.path_yaw),
+                                             reversed(node.path_mode)
+                                             ):
+                path.append([ix, iy, iyaw, imode])
+        if new_node_list:
+            path.append([self.start.x, self.start.y, self.start_yaw, new_node_list[0].path_mode[0]])
         return path
 
     def calc_dist_to_goal(self, x, y):

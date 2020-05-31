@@ -6,7 +6,7 @@ from rrt_dubins.rrt_star_dubins import RRTStarDubins
 
 import rospy
 from nav_msgs.msg import Odometry, OccupancyGrid, Path, GridCells
-from geometry_msgs.msg import PoseStamped
+from geometry_msgs.msg import PoseStamped, Point
 from tf.transformations import euler_from_quaternion, quaternion_from_euler
 import matplotlib.pyplot as plt
 import timeit
@@ -59,14 +59,16 @@ xy_array = lambda o: numpy.array([o.x, o.y])
 
 def main():
     server = Server()
-    rospy.init_node('rrt_path_planner', anonymous=True)
+    rospy.init_node('path_planner_node')
 
     rospy.Subscriber("odom", Odometry, server.odometry_callback)
     rospy.Subscriber("global_map", OccupancyGrid, server.map_callback)
     rospy.Subscriber("move_base_simple/goal", PoseStamped, server.goal_callback)
-    rospy.Subscriber("obstacles", GridCells, server.obstacles_callback)
+    # rospy.Subscriber("obstacles", GridCells, server.obstacles_callback)
 
-    pub = rospy.Publisher('path', Path, queue_size=10)
+    pub = rospy.Publisher('target_path', Path, queue_size=10)
+    pub_modes = rospy.Publisher('target_path_modes', GridCells, queue_size=10)
+
 
     rate = rospy.Rate(100)  # 10hz
 
@@ -80,8 +82,9 @@ def main():
         goal_position = server.get_goal()
         current_map = server.get_map()
         obstacles = server.get_obstacles()
+        modes = GridCells()
         # print(goal_position)
-        if current_position and goal_position and current_map and obstacles :
+        if current_position and goal_position and current_map:
             start = [*xy_array(current_position.pose.pose.position),
                      euler_from_quaternion(xyzw_array(current_position.pose.pose.orientation))[2]]
             goal = [*xy_array(goal_position.pose.position),
@@ -97,7 +100,6 @@ def main():
                          current_map.info.height * current_map.info.resolution]
             rrt = RRT(start,
                       goal,
-                      obstacles=obstacleList,
                       rand_area=rand_area,
                       glomal_map=obstacleList
                      )
@@ -114,7 +116,7 @@ def main():
             # print(path)
             path_rviz = Path()
             if path:
-                for x, y, yaw in path[::5]:
+                for x, y, yaw, mode in path[::5]:
                     p = PoseStamped()
                     p.header = server.get_odometry().header
                     p.pose.position.x = x
@@ -126,10 +128,19 @@ def main():
                     p.pose.orientation.w = result[3]
                     path_rviz.poses.append(p)
 
+                    k = Point()
+                    if mode == 'S':
+                        k.x = 0
+                    else:
+                        k.x = -1
+                    modes.cells.append(k)
+
                 path_rviz.header = server.get_odometry().header
                 path_rviz.header.stamp = rospy.Time.now()
+
                 pub.publish(path_rviz)
-                break
+                pub_modes.publish(modes)
+                # break
 
             # if path:
             #     rrt.draw_graph()

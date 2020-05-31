@@ -20,11 +20,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="e105b0c2-fa08-4188-a3d2-93e7f4a17e5f" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/../goal_publisher/CMakeLists.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../goal_publisher/package.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../goal_publisher/src/goal_publisher_node.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../map_publisher/src/map_publisher_node.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../map_publisher/src/map_publisher_node.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bin/path_planning_node" beforeDir="false" afterPath="$PROJECT_DIR$/bin/path_planning_node" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/rrt_dubins/dubins_path_planning.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/rrt_dubins/dubins_path_planning.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/rrt_dubins/rrt_cleaning_dubins.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/rrt_dubins/rrt_cleaning_dubins.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -45,7 +44,7 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="last_opened_file_path" value="$USER_HOME$/old_ws/liza_ws/src/planning" />
-    <property name="settings.editor.selected.configurable" value="editor.preferences.fonts.default" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="PyConsoleOptionsProvider">
     <option name="myPythonConsoleState">
@@ -77,6 +76,27 @@
       <option name="INPUT_FILE" value="$PROJECT_DIR$/bin/path_planning_node" />
       <method v="2" />
     </configuration>
+    <configuration name="rrt" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="planning" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/src/rrt_dubins" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/src/rrt_dubins/rrt.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="rrt_cleaning_dubins" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="planning" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -98,7 +118,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="rrt_star" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+    <configuration name="rrt_dubins" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="planning" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -110,28 +130,7 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/src/rrt_dubins/rrt_star.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="rrt_star_dubins" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="planning" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/src/rrt_dubins" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/src/rrt_dubins/rrt_star_dubins.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/src/rrt_dubins/rrt_dubins.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -163,18 +162,18 @@
     </configuration>
     <list>
       <item itemvalue="Python.path_planning_node" />
+      <item itemvalue="Python.rrt" />
       <item itemvalue="Python.rrt_cleaning_dubins" />
       <item itemvalue="Python.scratch_1" />
-      <item itemvalue="Python.rrt_star_dubins" />
-      <item itemvalue="Python.rrt_star" />
+      <item itemvalue="Python.rrt_dubins" />
     </list>
     <recent_temporary>
       <list>
         <item itemvalue="Python.path_planning_node" />
-        <item itemvalue="Python.rrt_star_dubins" />
-        <item itemvalue="Python.rrt_star" />
         <item itemvalue="Python.rrt_cleaning_dubins" />
+        <item itemvalue="Python.rrt_dubins" />
         <item itemvalue="Python.scratch_1" />
+        <item itemvalue="Python.rrt" />
       </list>
     </recent_temporary>
   </component>
@@ -228,46 +227,46 @@
       <screen x="67" y="27" width="1853" height="1053" />
     </state>
     <state x="736" y="310" key="FileChooserDialogImpl/67.27.1853.1053@67.27.1853.1053" timestamp="1586333913044" />
-    <state width="1826" height="365" key="GridCell.Tab.0.bottom" timestamp="1587565595037">
+    <state width="900" height="293" key="GridCell.Tab.0.bottom" timestamp="1590935471585">
       <screen x="67" y="27" width="1853" height="1053" />
     </state>
-    <state width="1826" height="365" key="GridCell.Tab.0.bottom/67.27.1853.1053@67.27.1853.1053" timestamp="1587565595037" />
-    <state width="1826" height="365" key="GridCell.Tab.0.center" timestamp="1587565595037">
+    <state width="900" height="293" key="GridCell.Tab.0.bottom/67.27.1853.1053@67.27.1853.1053" timestamp="1590935471585" />
+    <state width="900" height="293" key="GridCell.Tab.0.center" timestamp="1590935471584">
       <screen x="67" y="27" width="1853" height="1053" />
     </state>
-    <state width="1826" height="365" key="GridCell.Tab.0.center/67.27.1853.1053@67.27.1853.1053" timestamp="1587565595037" />
-    <state width="1826" height="365" key="GridCell.Tab.0.left" timestamp="1587565595035">
+    <state width="900" height="293" key="GridCell.Tab.0.center/67.27.1853.1053@67.27.1853.1053" timestamp="1590935471584" />
+    <state width="900" height="293" key="GridCell.Tab.0.left" timestamp="1590935471584">
       <screen x="67" y="27" width="1853" height="1053" />
     </state>
-    <state width="1826" height="365" key="GridCell.Tab.0.left/67.27.1853.1053@67.27.1853.1053" timestamp="1587565595035" />
-    <state width="1826" height="365" key="GridCell.Tab.0.right" timestamp="1587565595037">
+    <state width="900" height="293" key="GridCell.Tab.0.left/67.27.1853.1053@67.27.1853.1053" timestamp="1590935471584" />
+    <state width="900" height="293" key="GridCell.Tab.0.right" timestamp="1590935471584">
       <screen x="67" y="27" width="1853" height="1053" />
     </state>
-    <state width="1826" height="365" key="GridCell.Tab.0.right/67.27.1853.1053@67.27.1853.1053" timestamp="1587565595037" />
-    <state width="1826" height="365" key="GridCell.Tab.1.bottom" timestamp="1587565595039">
+    <state width="900" height="293" key="GridCell.Tab.0.right/67.27.1853.1053@67.27.1853.1053" timestamp="1590935471584" />
+    <state width="900" height="293" key="GridCell.Tab.1.bottom" timestamp="1590935471586">
       <screen x="67" y="27" width="1853" height="1053" />
     </state>
-    <state width="1826" height="365" key="GridCell.Tab.1.bottom/67.27.1853.1053@67.27.1853.1053" timestamp="1587565595039" />
-    <state width="1826" height="365" key="GridCell.Tab.1.center" timestamp="1587565595038">
+    <state width="900" height="293" key="GridCell.Tab.1.bottom/67.27.1853.1053@67.27.1853.1053" timestamp="1590935471586" />
+    <state width="900" height="293" key="GridCell.Tab.1.center" timestamp="1590935471585">
       <screen x="67" y="27" width="1853" height="1053" />
     </state>
-    <state width="1826" height="365" key="GridCell.Tab.1.center/67.27.1853.1053@67.27.1853.1053" timestamp="1587565595038" />
-    <state width="1826" height="365" key="GridCell.Tab.1.left" timestamp="1587565595038">
+    <state width="900" height="293" key="GridCell.Tab.1.center/67.27.1853.1053@67.27.1853.1053" timestamp="1590935471585" />
+    <state width="900" height="293" key="GridCell.Tab.1.left" timestamp="1590935471585">
       <screen x="67" y="27" width="1853" height="1053" />
     </state>
-    <state width="1826" height="365" key="GridCell.Tab.1.left/67.27.1853.1053@67.27.1853.1053" timestamp="1587565595038" />
-    <state width="1826" height="365" key="GridCell.Tab.1.right" timestamp="1587565595039">
+    <state width="900" height="293" key="GridCell.Tab.1.left/67.27.1853.1053@67.27.1853.1053" timestamp="1590935471585" />
+    <state width="900" height="293" key="GridCell.Tab.1.right" timestamp="1590935471586">
       <screen x="67" y="27" width="1853" height="1053" />
     </state>
-    <state width="1826" height="365" key="GridCell.Tab.1.right/67.27.1853.1053@67.27.1853.1053" timestamp="1587565595039" />
-    <state x="666" y="164" key="SettingsEditor" timestamp="1587387218876">
+    <state width="900" height="293" key="GridCell.Tab.1.right/67.27.1853.1053@67.27.1853.1053" timestamp="1590935471586" />
+    <state x="261" y="137" key="SettingsEditor" timestamp="1589992796518">
       <screen x="67" y="27" width="1853" height="1053" />
     </state>
-    <state x="666" y="164" key="SettingsEditor/67.27.1853.1053@67.27.1853.1053" timestamp="1587387218876" />
-    <state width="463" height="527" key="XDebugger.FullValuePopup" timestamp="1586427535065">
+    <state x="261" y="137" key="SettingsEditor/67.27.1853.1053@67.27.1853.1053" timestamp="1589992796518" />
+    <state width="463" height="527" key="XDebugger.FullValuePopup" timestamp="1590937218853">
       <screen x="67" y="27" width="1853" height="1053" />
     </state>
-    <state width="463" height="527" key="XDebugger.FullValuePopup/67.27.1853.1053@67.27.1853.1053" timestamp="1586427535065" />
+    <state width="463" height="527" key="XDebugger.FullValuePopup/67.27.1853.1053@67.27.1853.1053" timestamp="1590937218853" />
     <state x="67" y="213" width="957" height="678" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2" timestamp="1586547484051">
       <screen x="67" y="27" width="1853" height="1053" />
     </state>
@@ -276,5 +275,41 @@
       <screen x="67" y="27" width="1853" height="1053" />
     </state>
     <state x="649" y="212" width="706" height="680" key="find.popup/67.27.1853.1053@67.27.1853.1053" timestamp="1587565125358" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/src/rrt_dubins/rrt.py</url>
+          <line>89</line>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/src/rrt_dubins/rrt.py</url>
+          <line>78</line>
+          <option name="timeStamp" value="4" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/src/rrt_dubins/rrt.py</url>
+          <line>113</line>
+          <option name="timeStamp" value="5" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$APPLICATION_CONFIG_DIR$/scratches/scratch_1.py</url>
+          <line>15</line>
+          <option name="timeStamp" value="7" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/bin/path_planning_node</url>
+          <line>155</line>
+          <option name="timeStamp" value="23" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/bin/path_planning_node</url>
+          <line>117</line>
+          <option name="timeStamp" value="26" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>
