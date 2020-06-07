@@ -72,8 +72,8 @@ int main(int argc, char **argv){
   //    ros::Subscriber slam_current_pose_sub = m.subscribe("/commandVelocities.angular.zslam_out_pose", 8, slamOutPoseCallback);
   //    ros::Publisher goal_pub = m.advertise<geometry_msgs::PoseStamped>("/goal0000", 8);
 
-  //    kuka_movebase_publisher = m.advertise<geometry_msgs::Twist> ("kuk_keyboard_control/pose_commands", 32);
-  kuka_movebase_publisher = m.advertise<geometry_msgs::Twist> ("command_velocities", 32);
+   kuka_movebase_publisher = m.advertise<geometry_msgs::Twist> ("kuk_keyboard_control/pose_commands", 32);
+//  kuka_movebase_publisher = m.advertise<geometry_msgs::Twist> ("command_velocities", 32);
 
   //Функция при завершении работы
   signal(SIGINT, mySigintHandler);
@@ -118,38 +118,38 @@ void goToNewCoordinates(){
     double target_x = targetPath.poses.at(0).pose.position.x;
     double target_y = targetPath.poses.at(0).pose.position.y;
 
-    double dist_to_turn = 0;
-    if(modes.cells[0].x == 0){
-      for(int i = 0; i < modes.cells.size(); i++){
-        if(modes.cells[i].x != 0 or i == modes.cells.size() - 1){
-          double turn_x = targetPath.poses.at(i).pose.position.x;
-          double turn_y = targetPath.poses.at(i).pose.position.y;
+//    double dist_to_turn = 0;
+//    if(modes.cells[0].x == 0){
+//      for(int i = 0; i < modes.cells.size(); i++){
+//        if(modes.cells[i].x != 0 or i == modes.cells.size() - 1){
+//          double turn_x = targetPath.poses.at(i).pose.position.x;
+//          double turn_y = targetPath.poses.at(i).pose.position.y;
 
-          dist_to_turn = sqrt(pow((current_y) - target_y, 2) + pow((current_x) - target_x, 2));
-          break;
-        }
-      }
-    }
-      cout <<modes.cells[0].x << " " << dist_to_turn<< endl;
-      if(dist_to_turn > CRITICAL_DIST){
-        if(current_velocity < VELOCITY_MAX){
-          cout << "Ускорение" << endl;
-          current_velocity += VELOCITY_STEP;
-        }
-      }
-      else{
-        if(current_velocity > VELOCITY_BASE){
-          cout << "Замедление" << endl;
-          current_velocity -= VELOCITY_STEP;
-        }
-      }
+//          dist_to_turn = sqrt(pow((current_y) - target_y, 2) + pow((current_x) - target_x, 2));
+//          break;
+//        }
+//      }
+//    }
+//      cout <<modes.cells[0].x << " " << dist_to_turn<< endl;
+//      if(dist_to_turn > CRITICAL_DIST){
+//        if(current_velocity < VELOCITY_MAX){
+//          cout << "Ускорение" << endl;
+//          current_velocity += VELOCITY_STEP;
+//        }
+//      }
+//      else{
+//        if(current_velocity > VELOCITY_BASE){
+//          cout << "Замедление" << endl;
+//          current_velocity -= VELOCITY_STEP;
+//        }
+//      }
 
 
 
     double dist = sqrt(pow((current_y) - target_y, 2) + pow((current_x) - target_x, 2));
 
-//    cout << "x " << current_x << " y " << current_y  << " dist " << dist << endl;
-//    cout << "Target x: " << target_x << " y: " << target_y << endl;
+    cout << "x " << current_x << " y " << current_y  << " dist " << dist << endl;
+    cout << "Target x: " << target_x << " y: " << target_y << endl;
 
     // Если не достигнуто предельное расстояние до цели
     if(dist > DIST_TO_TARGET_MIN){
@@ -165,8 +165,8 @@ void goToNewCoordinates(){
 
       // Задаем движение
       commandVelocities.linear.x = current_velocity;
-      if(abs(yaw_diff) > 0.05){ // Поворот
-        if(yaw_diff > 0.05)
+      if(abs(yaw_diff) > 0.01){ // Поворот
+        if(yaw_diff > 0.01)
           commandVelocities.angular.z = -commandVelocities.linear.x/CURVATURE;
         else
           commandVelocities.angular.z = commandVelocities.linear.x/CURVATURE;
@@ -210,21 +210,21 @@ void modesCallback(const nav_msgs::GridCells &data){
 
 // Подписчик на одометрию
 void odometryCallback(const nav_msgs::Odometry &data){
-  //    currentPosition = data.pose.pose;
+      currentPosition = data.pose.pose;
 
   // Добавление рандомных шумов в заданном диапазоне
-  float yawAngle_noise = tf::getYaw(data.pose.pose.orientation) /*+ getRandom(YAW_MIN, YAW_MAX)*/;
+  yawAngle = tf::getYaw(data.pose.pose.orientation);
   geometry_msgs::Point currentPosition_noise;
   currentPosition_noise.x = data.pose.pose.position.x/* + getRandom(X_MIN, X_MAX)*/;
   currentPosition_noise.y = data.pose.pose.position.y /*+ getRandom(Y_MIN, Y_MAX)*/;
 
-  geometry_msgs::Point previous_currentPosition = currentPosition.position;
-  double previous_yawAngle = yawAngle;
+//  geometry_msgs::Point previous_currentPosition = currentPosition.position;
+//  double previous_yawAngle = yawAngle;
 
   // Сглаживание шумов
-  currentPosition.position.x = noiseSmoothing(currentPosition.position.x, currentPosition_noise.x, 0.9);
-  currentPosition.position.y = noiseSmoothing(currentPosition.position.y, currentPosition_noise.y, 0.9);
-  yawAngle = noiseSmoothing(yawAngle, yawAngle_noise, 0.9);
+//  currentPosition.position.x = noiseSmoothing(currentPosition.position.x, currentPosition_noise.x, 0.9);
+//  currentPosition.position.y = noiseSmoothing(currentPosition.position.y, currentPosition_noise.y, 0.9);
+//  yawAngle = noiseSmoothing(yawAngle, yawAngle_noise, 0.9);
 
 
   //  cout << "x: previous " << setw(11) << previous_currentPosition.x

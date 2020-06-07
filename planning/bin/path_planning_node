@@ -4,6 +4,7 @@ import numpy
 from rrt_dubins.rrt_cleaning_dubins import RRT
 from rrt_dubins.rrt_star_dubins import RRTStarDubins
 
+import math
 import rospy
 from nav_msgs.msg import Odometry, OccupancyGrid, Path, GridCells
 from geometry_msgs.msg import PoseStamped, Point
@@ -75,7 +76,7 @@ def main():
     result_ = []
     number = 0
     summa = 0
-
+    previous_path = list()
     while not rospy.is_shutdown():
 
         current_position = server.get_odometry()
@@ -83,8 +84,15 @@ def main():
         current_map = server.get_map()
         obstacles = server.get_obstacles()
         modes = GridCells()
-        # print(goal_position)
-        if current_position and goal_position and current_map:
+        path_rviz = Path()
+
+        if goal_position:
+            dist = math.sqrt(pow((current_position.pose.pose.position.y) - goal_position.pose.position.y, 2) +
+                             pow((current_position.pose.pose.position.x) - goal_position.pose.position.x, 2))
+
+            print(dist)
+        print(bool(goal_position), bool(current_position), bool(current_map))
+        if current_position and goal_position and current_map and dist > 0.4:
             start = [*xy_array(current_position.pose.pose.position),
                      euler_from_quaternion(xyzw_array(current_position.pose.pose.orientation))[2]]
             goal = [*xy_array(goal_position.pose.position),
@@ -114,9 +122,9 @@ def main():
             print('Время', timeit.default_timer() - starttime, 'Найден:', bool(path))
 
             # print(path)
-            path_rviz = Path()
             if path:
-                for x, y, yaw, mode in path[::5]:
+
+                for x, y, yaw, mode in path[::-1]:
                     p = PoseStamped()
                     p.header = server.get_odometry().header
                     p.pose.position.x = x
@@ -141,7 +149,7 @@ def main():
                 pub.publish(path_rviz)
                 pub_modes.publish(modes)
                 # break
-
+                previous_path = path
             # if path:
             #     rrt.draw_graph()
             #
@@ -151,7 +159,10 @@ def main():
             #     plt.grid(True)
             #     plt.pause(0.01)  # Need for Mac
             #     plt.show()
+        # pub.publish(path_rviz)
+        # pub_modes.publish(modes)
         rate.sleep()
+
         # rospy.spin()
     print('Общее время', sum(result_))
     # print('Среднее время', sum(result_) / number)

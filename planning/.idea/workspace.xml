@@ -20,11 +20,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="e105b0c2-fa08-4188-a3d2-93e7f4a17e5f" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/../map_publisher/src/map_publisher_node.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../map_publisher/src/map_publisher_node.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../map_publisher/rviz/diplom.rviz" beforeDir="false" afterPath="$PROJECT_DIR$/../map_publisher/rviz/diplom.rviz" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bin/path_planning_node" beforeDir="false" afterPath="$PROJECT_DIR$/bin/path_planning_node" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/rrt_dubins/dubins_path_planning.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/rrt_dubins/dubins_path_planning.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/rrt_dubins/rrt_cleaning_dubins.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/rrt_dubins/rrt_cleaning_dubins.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../trajectory_control/src/trajectory_control_node.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../trajectory_control/src/trajectory_control_node.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -164,8 +164,8 @@
       <item itemvalue="Python.path_planning_node" />
       <item itemvalue="Python.rrt" />
       <item itemvalue="Python.rrt_cleaning_dubins" />
-      <item itemvalue="Python.scratch_1" />
       <item itemvalue="Python.rrt_dubins" />
+      <item itemvalue="Python.scratch_1" />
     </list>
     <recent_temporary>
       <list>
@@ -227,22 +227,22 @@
       <screen x="67" y="27" width="1853" height="1053" />
     </state>
     <state x="736" y="310" key="FileChooserDialogImpl/67.27.1853.1053@67.27.1853.1053" timestamp="1586333913044" />
-    <state width="900" height="293" key="GridCell.Tab.0.bottom" timestamp="1590935471585">
+    <state width="1826" height="197" key="GridCell.Tab.0.bottom" timestamp="1591347887203">
       <screen x="67" y="27" width="1853" height="1053" />
     </state>
-    <state width="900" height="293" key="GridCell.Tab.0.bottom/67.27.1853.1053@67.27.1853.1053" timestamp="1590935471585" />
-    <state width="900" height="293" key="GridCell.Tab.0.center" timestamp="1590935471584">
+    <state width="1826" height="197" key="GridCell.Tab.0.bottom/67.27.1853.1053@67.27.1853.1053" timestamp="1591347887203" />
+    <state width="1826" height="197" key="GridCell.Tab.0.center" timestamp="1591347887202">
       <screen x="67" y="27" width="1853" height="1053" />
     </state>
-    <state width="900" height="293" key="GridCell.Tab.0.center/67.27.1853.1053@67.27.1853.1053" timestamp="1590935471584" />
-    <state width="900" height="293" key="GridCell.Tab.0.left" timestamp="1590935471584">
+    <state width="1826" height="197" key="GridCell.Tab.0.center/67.27.1853.1053@67.27.1853.1053" timestamp="1591347887202" />
+    <state width="1826" height="197" key="GridCell.Tab.0.left" timestamp="1591347887202">
       <screen x="67" y="27" width="1853" height="1053" />
     </state>
-    <state width="900" height="293" key="GridCell.Tab.0.left/67.27.1853.1053@67.27.1853.1053" timestamp="1590935471584" />
-    <state width="900" height="293" key="GridCell.Tab.0.right" timestamp="1590935471584">
+    <state width="1826" height="197" key="GridCell.Tab.0.left/67.27.1853.1053@67.27.1853.1053" timestamp="1591347887202" />
+    <state width="1826" height="197" key="GridCell.Tab.0.right" timestamp="1591347887203">
       <screen x="67" y="27" width="1853" height="1053" />
     </state>
-    <state width="900" height="293" key="GridCell.Tab.0.right/67.27.1853.1053@67.27.1853.1053" timestamp="1590935471584" />
+    <state width="1826" height="197" key="GridCell.Tab.0.right/67.27.1853.1053@67.27.1853.1053" timestamp="1591347887203" />
     <state width="900" height="293" key="GridCell.Tab.1.bottom" timestamp="1590935471586">
       <screen x="67" y="27" width="1853" height="1053" />
     </state>
@@ -301,12 +301,12 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/bin/path_planning_node</url>
-          <line>155</line>
+          <line>166</line>
           <option name="timeStamp" value="23" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/bin/path_planning_node</url>
-          <line>117</line>
+          <line>124</line>
           <option name="timeStamp" value="26" />
         </line-breakpoint>
       </breakpoints>

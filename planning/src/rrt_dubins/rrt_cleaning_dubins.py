@@ -48,7 +48,7 @@ class RRT:
             self.path_yaw = []
 
     def __init__(self, start, goal, glomal_map, rand_area,
-                 expand_dis=0.6, path_resolution=0.5, goal_sample_rate=5, max_iter=100):
+                 expand_dis=0.6, path_resolution=0.1, goal_sample_rate=5, max_iter=100):
         """
         Setting Parameter
 
@@ -78,9 +78,9 @@ class RRT:
 
         self.new_node_list = []
 
-        self.curvature = 3.0  # for dubins path
-        self.goal_yaw_th = np.deg2rad(1.0)
-        self.goal_xy_th = 0.5
+        self.curvature = 1 / 0.3  # for dubins path
+        self.goal_yaw_th = np.deg2rad(10.0)
+        self.goal_xy_th = 0.1
 
     def planning(self, animation=False):
         """
